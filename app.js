@@ -5,19 +5,14 @@ const expressLayouts = require("express-ejs-layouts");
 const session = require("express-session");
 const MongoStore = require("connect-mongo");
 
-const connectDB = require("./server/config/db");
+const AppError = require("./utils/appError");
+const globalErrorHandler = require("./controllers/errorController");
 
 //require routes
-const mainRoute = require("./server/routes/mainRoutes");
-const adminRoute = require("./server/routes/adminRoutes");
+const mainRoute = require("./routes/mainRoutes");
+const adminRoute = require("./routes/adminRoutes");
 
 const app = express();
-
-const PORT = process.env.PORT || 5000;
-
-// Connect to DB
-
-connectDB();
 
 // Middleware
 
@@ -56,8 +51,14 @@ app.use(express.static("public"));
 app.use("/", mainRoute);
 app.use("/admin", adminRoute);
 
+// handle all unhandled routes
+app.all("*", (req, res, next) => {
+  next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
+});
+
+// Global Error Handeling Middleware
+app.use(globalErrorHandler);
+
 // run server
 
-app.listen(PORT, () => {
-  console.log(`Server is Listening on port ${PORT}`);
-});
+module.exports = app;

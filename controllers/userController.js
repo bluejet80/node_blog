@@ -8,6 +8,10 @@ const locals = {
   author: "Jarett Young",
 };
 
+const signToken = (id) => {};
+
+const createSendToken = (user, statusCode, res) => {};
+
 exports.userLogin = async (req, res) => {
   try {
     const { username, passowrd } = req.body;
@@ -18,14 +22,13 @@ exports.userLogin = async (req, res) => {
 
 exports.userSignup = async (req, res) => {
   try {
-    const { username, email, password } = req.body;
-    const hashedPassword = await bcrypt.hash(password, 10);
-
     try {
       const user = await User.create({
-        username,
-        email,
-        password: hashedPassword,
+        username: req.body.username,
+        email: req.body.email,
+        password: req.body.password,
+        passwordConfirm: req.body.passwordConfirm,
+        passwordChangedAt: req.body.passwordChangedAt,
       });
       res.status(201).json({
         status: "success",

@@ -4,8 +4,8 @@
   "description": "Blog using node and mongdb",
   "main": "app.js",
   "scripts": {
-    "start": "app.js",
-    "dev": "nodemon app.js",
+    "start": "server.js",
+    "dev": "nodemon server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "jay",
