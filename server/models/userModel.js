@@ -20,7 +20,7 @@ const userSchema = new mongoose.Schema({
   },
   confirmPassword: {
     type: String,
-    required: [true, "Please Confirm your Passowrd!"],
+    required: [true, "Please Confirm your Password!"],
     validate: {
       validator: function (el) {
         return el === this.password;
@@ -36,6 +36,10 @@ const userSchema = new mongoose.Schema({
     default: true,
     select: false,
   },
+});
+
+userSchema.pre("save", (next) => {
+  next();
 });
 
 module.exports = mongoose.model("User", userSchema);
