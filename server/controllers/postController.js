@@ -1,7 +1,4 @@
-const express = require("express");
-const Post = require("../models/post");
-
-const router = express.Router();
+const Post = require("../models/postModel");
 
 const locals = {
   title: "NodeJS Blog",
@@ -9,10 +6,7 @@ const locals = {
   author: "Jarett Young",
 };
 
-// Routes
-
-// Home GET
-router.get("", async (req, res) => {
+exports.getAllPosts = async (req, res) => {
   try {
     let perPage = 10;
     let page = req.query.page || 1;
@@ -37,11 +31,9 @@ router.get("", async (req, res) => {
   } catch (error) {
     console.log(error);
   }
-});
+};
 
-// Post GET
-
-router.get("/post/:id", async (req, res) => {
+exports.getSinglePost = async (req, res) => {
   try {
     const id = req.params.id;
     const data = await Post.findById({ _id: id });
@@ -50,16 +42,9 @@ router.get("/post/:id", async (req, res) => {
   } catch (error) {
     console.log(error);
   }
-});
+};
 
-// About GET
-router.get("/about", (req, res) => {
-  res.render("about");
-});
-
-// Search POST
-
-router.post("/search", async (req, res) => {
+exports.searchPosts = async (req, res) => {
   try {
     let searchTerm = req.body.searchTerm;
     // remove any special characters
@@ -71,7 +56,6 @@ router.post("/search", async (req, res) => {
         { body: { $regex: new RegExp(searchTerm, "i") } },
       ],
     });
-
     res.render("search", {
       data,
       locals,
@@ -79,6 +63,4 @@ router.post("/search", async (req, res) => {
   } catch (err) {
     console.log(err);
   }
-});
-
-module.exports = router;
+};
