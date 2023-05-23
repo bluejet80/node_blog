@@ -4,6 +4,8 @@ const mongoose = require("mongoose");
 
 const PORT = process.env.PORT || 5000;
 
+//handling uncaught exceptions
+
 const connectDB = async () => {
   try {
     const conn = await mongoose.connect(process.env.MONGODB_URI);

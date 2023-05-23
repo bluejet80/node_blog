@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
+const bcrypt = require("bcryptjs");
 
 const userSchema = new mongoose.Schema({
   username: {
@@ -38,8 +39,48 @@ const userSchema = new mongoose.Schema({
   },
 });
 
-userSchema.pre("save", (next) => {
+// Presave Middleware
+
+// update the passwordChangedAt field only if the passowrd was changed
+userSchema.pre("save", function (next) {
+  if (!this.isModified("password") || this.isNew) return next();
+
+  this.passwordChangedAt = Date.now() - 1000; //ensure that the token is created after the password change
+
   next();
 });
+
+//encrypting the password
+userSchema.pre("save", async function (next) {
+  //only run this function if password was created or modified
+  if (!this.isModified("password")) return next();
+  // hash the password with a cost of 12
+  this.password = await bcrypt.hash(this.password, 12);
+
+  // delete the passwordConfirm
+  this.confirmPassword = undefined;
+
+  next();
+});
+
+// Instance Methods
+
+// Check if Password is Correct
+userSchema.methods.correctPassword = async function (
+  candidatePassword,
+  userPassword
+) {
+  //return true or false
+  return await bcrypt.compare(candidatePassword, userPassword);
+};
+
+// Check if password has been changed
+userSchema.methods.changedPasswordAfter = function (JWTTimestamp) {
+  if (this.passwordChangedAt) {
+    const changedTimestamp = parseInt(this.passwordChangedAt.getTime() / 1000);
+    return JWTTimestamp < changedTimestamp;
+  }
+  return false;
+};
 
 module.exports = mongoose.model("User", userSchema);

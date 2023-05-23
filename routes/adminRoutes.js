@@ -11,25 +11,22 @@ const locals = {
 };
 
 // Render Static Login Page
-router.get("/", async (req, res) => {
-  try {
-    res.render("admin/login", { locals, layout: adminLayout });
-  } catch (error) {
-    console.log(error);
-  }
+router.get("/", (req, res) => {
+  res.render("admin/login", { locals, layout: adminLayout });
 });
 
 // render Static Signup Page
-router.get("/register", async (req, res) => {
-  try {
-    res.render("admin/register", { locals, layout: adminLayout });
-  } catch (error) {
-    console.log(error);
-  }
+router.get("/register", (req, res) => {
+  res.render("admin/register", { locals, layout: adminLayout });
 });
 
-router.post("/", userController.userLogin);
+router.post("/login", userController.userLogin);
 
-router.post("/register", userController.userSignup);
+router.post("/signup", userController.userSignup);
+
+router.get("/dashboard", (req, res) => {
+  const user = req.session.user;
+  res.render("admin/dashboard", { locals, layout: adminLayout, user });
+});
 
 module.exports = router;

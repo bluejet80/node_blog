@@ -7,12 +7,16 @@ const MongoStore = require("connect-mongo");
 
 const AppError = require("./utils/appError");
 const globalErrorHandler = require("./controllers/errorController");
+const morgan = require("morgan");
 
 //require routes
 const mainRoute = require("./routes/mainRoutes");
 const adminRoute = require("./routes/adminRoutes");
 
 const app = express();
+
+// Dev Logging
+app.use(morgan("dev"));
 
 // Middleware
 

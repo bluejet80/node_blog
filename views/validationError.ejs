@@ -1,0 +1,11 @@
+<div class="author">
+  <h1 class="author__heading"><%= err.status %></h1>
+  <p>
+    Message: <% const errors = err.message.split(','); for (const item of
+    errors) {%>
+    <li><%= item %></li>
+
+    <%} %> StatusCode: <%= err.statusCode%>
+  </p>
+  <a href="/admin/register"><p>Go back</p></a>
+</div>

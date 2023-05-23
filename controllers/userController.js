@@ -1,5 +1,4 @@
 const User = require("../models/userModel");
-const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const catchAsync = require("../utils/catchAsync");
 
@@ -22,21 +21,22 @@ const createSendToken = (user, statusCode, res) => {
       Date.now() + process.env.JWT_COOKIE_EXPIRES * 24 * 60 * 60 * 1000 // must be in milliseconds 90d -> Milliseconds
     ),
     httpOnly: true,
+    secure: true,
   };
-
-  if (process.env.NODE_ENV === "production") cookieOptions.secure = true;
 
   res.cookie("jwt", token, cookieOptions);
 
   user.password = undefined;
 
-  res.status(statusCode).json({
-    status: "success",
-    token,
-    data: {
-      user,
-    },
-  });
+  res.redirect("/admin/dashboard");
+
+  // res.status(statusCode).json({
+  //   status: "success",
+  //   token,
+  //   data: {
+  //     user,
+  //   },
+  // });
 };
 
 exports.userLogin = catchAsync(async (req, res, next) => {
@@ -48,8 +48,8 @@ exports.userSignup = catchAsync(async (req, res, next) => {
     username: req.body.username,
     email: req.body.email,
     password: req.body.password,
-    passwordConfirm: req.body.passwordConfirm,
-    passwordChangedAt: req.body.passwordChangedAt,
+    confirmPassword: req.body.confirmPassword,
   });
+  req.session.user = newUser;
   createSendToken(newUser, 201, res);
 });

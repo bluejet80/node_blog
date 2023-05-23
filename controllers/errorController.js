@@ -26,6 +26,27 @@ const processNoResultsSearch = (err, req, res) => {
   res.render("noResults", { err, locals, req });
 };
 
+const processDupUser = (err, req, res) => {
+  err.status = "Username Already Exists";
+  const locals = { title: "Dup Key Error" };
+
+  res.render("dupUser", { err, locals, req });
+};
+
+const processDupEmail = (err, req, res) => {
+  err.status = "Email Already Exists";
+  const locals = { title: "Dup Key Error" };
+
+  res.render("dupEmail", { err, locals, req });
+};
+
+const processFormValidationError = (err, req, res) => {
+  err.status = "Form Validation Error";
+  const locals = { title: "Form Error" };
+
+  res.render("validationError", { err, locals, req });
+};
+
 module.exports = (err, req, res, next) => {
   if (err.statusCode === 444) {
     return processNoResultsSearch(err, req, res);
@@ -33,7 +54,15 @@ module.exports = (err, req, res, next) => {
   if (err.statusCode === 404) {
     return processNotFound(err, req, res);
   }
+  if (err.code === 11000 && err.keyValue.username) {
+    return processDupUser(err, req, res);
+  }
+  if (err.code === 11000 && err.keyValue.email) {
+    return processDupEmail(err, req, res);
+  }
+  if (err.message.includes("User validation failed:")) {
+    return processFormValidationError(err, req, res);
+  }
 
-  //if(err.statusCode ===)
   processNormal(err, req, res);
 };

@@ -1,5 +1,9 @@
 <header class="header">
-  <a href="/" class="header__logo">Admin</a>
+  <a href="/" class="header__logo"
+    >Admin<% if(typeof user == 'object' && user) {%> :
+    <b><%= user.username %></b>
+    <% } %>
+  </a>
   <nav class="header__nav">
     <ul>
       <li><a href="/">Home</a></li>
