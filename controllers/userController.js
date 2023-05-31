@@ -1,6 +1,7 @@
 const User = require("../models/userModel");
 const jwt = require("jsonwebtoken");
 const catchAsync = require("../utils/catchAsync");
+const AppError = require("../utils/appError");
 
 const locals = {
   title: "Admin Pages",
@@ -40,7 +41,13 @@ const createSendToken = (user, statusCode, res) => {
 };
 
 exports.userLogin = catchAsync(async (req, res, next) => {
-  const { username, passowrd } = req.body;
+  const { username, password } = req.body;
+
+  if (!username || !password) {
+    next(new AppError("Please Provide a username and or Password", 400));
+  }
+
+  const user = await User.find({ username: username });
 });
 
 exports.userSignup = catchAsync(async (req, res, next) => {
